@@ -56,12 +56,8 @@ public class ConnectFour {
     }
 
     public boolean isFull(){
-        for(int i=0; i<=width; i++){
-            if(grid[i][height] == 'x') {
-                return false;
-            }
-        }
-        return true;
+        String temp = new String(grid[0]);
+        return !temp.contains("x");
     }
 
     public char getCurrentPlayer(){
@@ -109,11 +105,71 @@ public class ConnectFour {
         return output;
     }
 
+    private String getRightDiagonal(int row, int col){
+        int botRow = row;
+        int leftCol = col;
+        int topRow = row;
+        int rightCol = col;
+        String output = new String();
+        //find the left boundary
+        while(botRow < height-1 && leftCol != 0){
+            botRow += 1;
+            leftCol -= 1;
+        }
+
+        //find the right boundary
+        while(topRow > 0 && rightCol < width-1){
+            topRow -= 1;
+            rightCol += 1;
+        }
+
+        //get the entires in our boundary
+        for(int i = leftCol; i<=rightCol; i++){
+            output = output + grid[botRow][i];
+            botRow--;
+            if(botRow < topRow){
+                return output;
+            }
+        }
+        return output;
+    }
+
+    private String getLeftDiagonal(int row, int col){
+        int botRow = row;
+        int leftCol = col;
+        int topRow = row;
+        int rightCol = col;
+        String output = new String();
+        //find the left boundary
+        while(topRow !=0 && leftCol != 0){
+            topRow -= 1;
+            leftCol -= 1;
+        }
+
+        //find the right boundary
+        while(botRow < height-1 && rightCol < width-1){
+            botRow += 1;
+            rightCol += 1;
+        }
+
+        //get the entries in our boundary
+        for(int i = leftCol; i<=rightCol; i++){
+            output = output + grid[topRow][i];
+            topRow++;
+            if(topRow > botRow){
+                return output;
+            }
+        }
+        return output;
+    }
+
     public boolean hasWon(){
         String winningString = String.format("%c%c%c%c", activePlayer, activePlayer, activePlayer, activePlayer);
-        System.out.println(getVertical(lastCol));
-        System.out.println(getHorizontal(lastRow));
+
+        System.out.println(getLeftDiagonal(lastRow, lastCol));
         return getHorizontal(lastRow).contains(winningString) ||
-                getVertical(lastCol).contains(winningString);
+                getVertical(lastCol).contains(winningString) ||
+                getRightDiagonal(lastRow, lastCol).contains(winningString) ||
+                getLeftDiagonal(lastRow, lastCol).contains(winningString);
     }
 }
