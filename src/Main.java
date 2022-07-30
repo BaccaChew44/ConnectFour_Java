@@ -12,10 +12,13 @@ public class Main {
 
         while(!myGame.isFull()){
             System.out.printf("%2s Player is up! Please Enter a Column:", myGame.getCurrentPlayer());
-            int column = scanner.nextInt();
-            myGame.placePiece(column);
+            myGame.chooseAndPlace(scanner);
             myGame.printGrid();
+            if(myGame.hasWon()){
+                System.out.printf("Congratulations, Player %2s has won!", myGame.getCurrentPlayer());
+                break;
+            }
+            myGame.nextTurn();
         }
-
     }
 }

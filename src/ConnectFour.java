@@ -1,10 +1,11 @@
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class ConnectFour {
 
     //define the two players
     private static final char[] Players = {'R', 'Y'};
-    private static char activePlayer = Players[1];
+    private static char activePlayer = Players[0];
 
     //define the dimensions of the board
     private final int width, height;
@@ -12,8 +13,9 @@ public class ConnectFour {
     //define the grid
     private final char[][] grid;
 
+    //save the last location
     private int lastCol = -1;
-    private int lastTop = -1;
+    private int lastRow = -1;
 
     public ConnectFour(int w, int h){
         width = w;
@@ -63,12 +65,7 @@ public class ConnectFour {
     }
 
     public char getCurrentPlayer(){
-        if(activePlayer == Players[0]){
-            return Players[1];
-        }
-        else{
-            return Players[0];
-        }
+        return activePlayer;
     }
 
     public void nextTurn(){
@@ -80,12 +77,43 @@ public class ConnectFour {
         }
     }
 
-    public void placePiece(int column){
-        for(int i=height-1;i>=0;i--){
-            if(grid[i][column-1] == 'x') {
-                grid[i][column-1] = activePlayer;
-                return;
+    public void chooseAndPlace(Scanner input){
+        do {
+            int column = input.nextInt();
+            if(column>width){
+                System.out.printf("Column must be between 1 and %d. Please enter a new column:",width);
+                System.out.println("");
+                continue;
             }
+            for (int i = height - 1; i >= 0; i--) {
+                if (grid[i][column - 1] == 'x') {
+                    grid[i][column - 1] = activePlayer;
+                    lastCol = column - 1;
+                    lastRow = i;
+                    return;
+                }
+            }
+            System.out.println("That column is already filled, please select a new column:");
+        }while(true);
+    }
+
+    private String getHorizontal(int row){
+        return new String(grid[row]);
+    }
+
+    private String getVertical(int column){
+        String output = new String();
+        for(int i =0; i<height;i++){
+            output = output + grid[i][column];
         }
+        return output;
+    }
+
+    public boolean hasWon(){
+        String winningString = String.format("%c%c%c%c", activePlayer, activePlayer, activePlayer, activePlayer);
+        System.out.println(getVertical(lastCol));
+        System.out.println(getHorizontal(lastRow));
+        return getHorizontal(lastRow).contains(winningString) ||
+                getVertical(lastCol).contains(winningString);
     }
 }
